@@ -62,6 +62,9 @@ const run = async () => {
             })
         })
 
+
+
+
         //posting review on services
         app.post('/postreview', async (req, res) => {
             const review = req.body;
@@ -99,6 +102,18 @@ const run = async () => {
             })
 
         })
+        // sorting the review user need to get before update review
+        app.get('/myreviews/:id', async (req, res) => {
+            const id = req.params.id;
+
+            const filter = { _id: ObjectId(id) }
+            const result = await reviewsCollection.findOne(filter)
+            res.send({
+                status: "success",
+                data: result
+            })
+
+        })
 
 
         // delete single review
@@ -113,6 +128,20 @@ const run = async () => {
             })
         })
 
+        // api for updating an existing review
+        app.patch('/updatereview/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const updatedDoc = req.body
+            console.log(updatedDoc);
+            const filter = { _id: ObjectId(id) }
+            console.log(filter);
+            const result = await reviewsCollection.replaceOne(filter, updatedDoc)
+            res.send({
+                status: "success",
+                data: result
+            })
+        })
 
 
 
