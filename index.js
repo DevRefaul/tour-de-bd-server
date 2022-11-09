@@ -28,6 +28,19 @@ const run = async () => {
                 data: result
             })
         })
+
+        // add service
+        app.post('/addservice', async (req, res) => {
+            const document = req.body;
+            console.log(document)
+            const result = await tourDestinations.insertOne(document)
+            res.send({
+                status: "success",
+                data: result
+            })
+        })
+
+
         // sending 3 data to homepage
         app.get('/serviceshome', async (req, res) => {
             const query = {}
