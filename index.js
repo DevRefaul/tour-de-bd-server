@@ -74,6 +74,33 @@ const run = async () => {
 
         })
 
+        // getting all  the specefic reviews by each user have reviewed
+        app.get('/myreviews', async (req, res) => {
+            const email = req.query.email;
+
+            const filter = { email: email }
+            const result = await reviewsCollection.find(filter).toArray()
+            res.send({
+                status: "success",
+                data: result
+            })
+
+        })
+
+
+        // delete single review
+        app.delete('/deletereview/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const filter = { _id: ObjectId(id) }
+            const result = await reviewsCollection.deleteOne(filter)
+            res.send({
+                status: "success",
+                data: result
+            })
+        })
+
+
 
 
     } catch (error) {
