@@ -27,7 +27,15 @@ const run = async () => {
                 data: result
             })
         })
-
+        // sending 3 data to homepage
+        app.get('/serviceshome', async (req, res) => {
+            const query = {}
+            const result = await tourDestinations.find(query).limit(3).toArray()
+            res.send({
+                status: "success",
+                data: result
+            })
+        })
 
     } catch (error) {
 
