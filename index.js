@@ -18,7 +18,8 @@ const run = async () => {
 
         const tourDestinations = client.db('tourPlaces').collection('destinations')
 
-        app.get('/tours', async (req, res) => {
+        // sending all data
+        app.get('/services', async (req, res) => {
             const query = {}
             const result = await tourDestinations.find(query).toArray()
             res.send({
@@ -26,6 +27,7 @@ const run = async () => {
                 data: result
             })
         })
+
 
     } catch (error) {
 
