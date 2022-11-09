@@ -52,7 +52,6 @@ const run = async () => {
         //posting review on services
         app.post('/postreview', async (req, res) => {
             const review = req.body;
-            console.log(req.params.id)
             const result = await reviewsCollection.insertOne(review)
             res.send(
                 {
@@ -63,7 +62,17 @@ const run = async () => {
         })
 
         // getting the specific reviews on each services
+        app.get('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { reviewedService: id }
 
+            const result = await reviewsCollection.find(query).toArray()
+            res.send({
+                status: "success",
+                data: result
+            })
+
+        })
 
 
 
