@@ -22,7 +22,7 @@ const run = async () => {
         // sending all data
         app.get('/services', async (req, res) => {
             const query = {}
-            const result = await tourDestinations.find(query).toArray()
+            const result = await tourDestinations.find(query).sort({ createdTime: -1 }).toArray()
             res.send({
                 status: "success",
                 data: result
@@ -32,7 +32,6 @@ const run = async () => {
         // add service
         app.post('/addservice', async (req, res) => {
             const document = req.body;
-            console.log(document)
             const result = await tourDestinations.insertOne(document)
             res.send({
                 status: "success",
@@ -44,7 +43,7 @@ const run = async () => {
         // sending 3 data to homepage
         app.get('/serviceshome', async (req, res) => {
             const query = {}
-            const result = await tourDestinations.find(query).limit(3).toArray()
+            const result = await tourDestinations.find(query).limit(3).sort({ createdTime: -1 }).toArray()
             res.send({
                 status: "success",
                 data: result
@@ -82,7 +81,7 @@ const run = async () => {
             const id = req.params.id;
             const query = { reviewedService: id }
 
-            const result = await reviewsCollection.find(query).toArray()
+            const result = await reviewsCollection.find(query).sort({ reviewTime: -1 }).toArray()
             res.send({
                 status: "success",
                 data: result
@@ -119,7 +118,6 @@ const run = async () => {
         // delete single review
         app.delete('/deletereview/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id);
             const filter = { _id: ObjectId(id) }
             const result = await reviewsCollection.deleteOne(filter)
             res.send({
@@ -131,11 +129,8 @@ const run = async () => {
         // api for updating an existing review
         app.patch('/updatereview/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id)
             const updatedDoc = req.body
-            console.log(updatedDoc);
             const filter = { _id: ObjectId(id) }
-            console.log(filter);
             const result = await reviewsCollection.replaceOne(filter, updatedDoc)
             res.send({
                 status: "success",
