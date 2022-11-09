@@ -37,6 +37,17 @@ const run = async () => {
             })
         })
 
+        // sending single data
+        app.get('/services/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const result = await tourDestinations.findOne(filter)
+            res.send({
+                status: 'success',
+                data: result
+            })
+        })
+
     } catch (error) {
 
     }
