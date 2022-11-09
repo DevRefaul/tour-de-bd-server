@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 const app = express()
 require('dotenv').config()
@@ -17,6 +17,7 @@ const run = async () => {
     try {
 
         const tourDestinations = client.db('tourPlaces').collection('destinations')
+        const reviewsCollection = client.db('tourPlaces').collection('reviews')
 
         // sending all data
         app.get('/services', async (req, res) => {
@@ -47,6 +48,24 @@ const run = async () => {
                 data: result
             })
         })
+
+        //posting review on services
+        app.post('/postreview', async (req, res) => {
+            const review = req.body;
+            console.log(req.params.id)
+            const result = await reviewsCollection.insertOne(review)
+            res.send(
+                {
+                    status: 'success',
+                    data: result
+                }
+            )
+        })
+
+        // getting the specific reviews on each services
+
+
+
 
     } catch (error) {
 
