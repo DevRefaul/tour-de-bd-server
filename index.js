@@ -125,6 +125,7 @@ const run = async () => {
             const decoded = req.decoded
             const email = req.query.email;
 
+
             if (decoded.email !== email) {
                 return res.status(403).send({
                     message: 'Forbidden Access'
@@ -133,6 +134,7 @@ const run = async () => {
 
             const filter = { email: email }
             const result = await reviewsCollection.find(filter).toArray()
+
             res.send({
                 status: "success",
                 data: result
