@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken')
 const { MongoClient, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 const app = express()
@@ -9,12 +10,42 @@ app.use(cors())
 app.use(express.json())
 
 
+// function for verifying jwt token
+const verifyJWT = (req, res, next) => {
+    const authToken = req.headers.authorization
+    if (!authToken) {
+        return res.status(401).send({
+            message: 'Unauthorized Access'
+        })
+    }
+    const token = authToken.split(' ')[1]
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(401).send({
+                message: 'Unauthorized Access'
+            })
+        }
+        req.decoded = decoded
+        next()
+    })
+}
+
+
 // mongo configure
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.w9zclsg.mongodb.net/?retryWrites=true&w=majority`
 const client = new MongoClient(uri);
 
 const run = async () => {
     try {
+
+        // jwt token generate
+        app.post('/jwt', async (req, res) => {
+            const user = req.body
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2hr' })
+            res.send({ token })
+        })
+
+
 
         const tourDestinations = client.db('tourPlaces').collection('destinations')
         const reviewsCollection = client.db('tourPlaces').collection('reviews')
@@ -90,8 +121,15 @@ const run = async () => {
         })
 
         // getting all  the specefic reviews by each user have reviewed
-        app.get('/myreviews', async (req, res) => {
+        app.get('/myreviews', verifyJWT, async (req, res) => {
+            const decoded = req.decoded
             const email = req.query.email;
+
+            if (decoded.email !== email) {
+                return res.status(403).send({
+                    message: 'Forbidden Access'
+                })
+            }
 
             const filter = { email: email }
             const result = await reviewsCollection.find(filter).toArray()
